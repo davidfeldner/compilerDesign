@@ -36,5 +36,5 @@ let rec tcomp (e: expr) (cenv: string list) : texpr =
         | [] -> tcomp ebody cenv
     | Prim(ope, e1, e2) -> TPrim(ope, tcomp e1 cenv, tcomp e2 cenv)
 
-printfn "%A" (tcomp (Let2(([ ("x", CstI 1); ("y", CstI 1) ], Var "y"))) [])
-printfn "%A" (tcomp (Let("x", CstI 1, CstI 1)) [])
+//printfn "%A" (tcomp (Let2(([ ("x", CstI 1); ("y", CstI 1) ], Var "y"))) [])
+//printfn "%A" (tcomp (Let("x", CstI 1, CstI 1)) [])

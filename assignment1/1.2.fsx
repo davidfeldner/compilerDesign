@@ -61,4 +61,4 @@ let rec diff a s =
     | Sub(x, y) -> Sub(diff x s, diff y s)
     | Mul(x, y) -> Add(Mul(y, diff x s), Mul(x, diff y s))
 
-printf "%A\n" (simplify ((diff (Mul(Var "x", Mul(CstI 2, Var "a"))) "x")))
+//printf "%A\n" (simplify ((diff (Mul(Var "x", Mul(CstI 2, Var "a"))) "x")))

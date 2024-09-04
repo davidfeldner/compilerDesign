@@ -33,5 +33,5 @@ let rec freevars e : string list =
     | Prim(ope, e1, e2) -> union (freevars e1, freevars e2)
 
 
-printfn "%A" (freevars (Let2(([ ("x", CstI 1); ("y", CstI 1) ], Var "u"))))
-printfn "%A" (freevars (Let("x", CstI 1, CstI 1)))
+//printfn "%A" (freevars (Let2(([ ("x", CstI 1); ("y", CstI 1) ], Var "u"))))
+//printfn "%A" (freevars (Let("x", CstI 1, CstI 1)))
