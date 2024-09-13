@@ -284,7 +284,7 @@ let _fsyacc_reductions = lazy [|
                 (
                    (
 # 37 "ExprPar.fsy"
-                                                                   Ternary(_1,_3,_5 
+                                                                   Ternary(_1,_3,_5) 
                    )
 # 37 "ExprPar.fsy"
                  : 'gentype_Expr));

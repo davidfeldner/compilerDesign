@@ -5,7 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Absyn.fs" />
-    <Compile Include="Expr.fs" />
     <Compile Include="ExprPar.fs" />
     <Compile Include="ExprLex.fs" />
     <Compile Include="Parse.fs" />
