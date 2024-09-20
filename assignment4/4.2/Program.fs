@@ -31,4 +31,7 @@ let pow8 b = b*b*b*b*b*b*b*b in
 end
 "
 
-printfn "%A" (run d)
+printfn "A: \n%A\n" (run a)
+printfn "B: \n%A\n" (run b)
+printfn "C: \n%A\n" (run c)
+printfn "D: \n%A" (run d)
