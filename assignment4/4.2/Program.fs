@@ -31,6 +31,4 @@ let pow8 b = b*b*b*b*b*b*b*b in
 end
 "
 
-let e = fromString @"  let x a b c = a+b+c in x 1 2 3 end"
-
-printfn "%A" (run e)
+printfn "%A" (run d)
