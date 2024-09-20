@@ -61,9 +61,9 @@ let rec eval (e: expr) (env: value env) : int =
         match fClosure with
         | Closure(f, x, fBody, fDeclEnv) ->
             let fBodyEnv = (f, fClosure) :: fDeclEnv
-            let xVals = List.fold (fun acc earg -> Int(eval earg env) :: acc) [] x
+            let xVals = List.fold (fun acc earg -> Int(eval earg env) :: acc) [] eArg
             let zip = List.zip x xVals
-            let fBodyEnvFold = List.fold (fun acc (x, xVal) -> (x, xVal) :: acc)
+            let fBodyEnv = List.fold (fun acc (x, xVal) -> (x, xVal) :: acc) [] zip
             //let fBodyEnv = (x, xVal) :: (f, fClosure) :: fDeclEnv
             eval fBody fBodyEnv
         | _ -> failwith "eval Call: not a function"
@@ -74,7 +74,7 @@ let rec eval (e: expr) (env: value env) : int =
 let run e = eval e []
 
 (* Examples in abstract syntax *)
-
+(* 
 let ex1 = Letfun("f1", "x", Prim("+", Var "x", CstI 1), Call(Var "f1", CstI 12))
 
 (* Example: factorial *)
@@ -124,3 +124,4 @@ let ex5 =
             Call(Var "fib", CstI 25)
         )
     )
+ *)
