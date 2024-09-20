@@ -60,8 +60,11 @@ let rec eval (e: expr) (env: value env) : int =
 
         match fClosure with
         | Closure(f, x, fBody, fDeclEnv) ->
-            let xVal = Int(eval eArg env)
-            let fBodyEnv = (x, xVal) :: (f, fClosure) :: fDeclEnv
+            let fBodyEnv = (f, fClosure) :: fDeclEnv
+            let xVals = List.fold (fun acc earg -> Int(eval earg env) :: acc) [] x
+            let zip = List.zip x xVals
+            let fBodyEnvFold = List.fold (fun acc (x, xVal) -> (x, xVal) :: acc)
+            //let fBodyEnv = (x, xVal) :: (f, fClosure) :: fDeclEnv
             eval fBody fBodyEnv
         | _ -> failwith "eval Call: not a function"
     | Call _ -> failwith "eval Call: not first-order function"
