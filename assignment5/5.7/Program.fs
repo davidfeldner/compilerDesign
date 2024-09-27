@@ -1,6 +1,9 @@
 ﻿open TypedFun
 
 printfn "%A" (types)
-let ex3 = Let("b", ListExpr([CstI 1; CstI 1], TypI), Var "b");;
+let success = Let("b", ListExpr([CstI 1; CstI 1], TypI), Var "b");;
+let fail = Let("b", ListExpr([CstI 1; CstB false], TypI), Var "b");;
 
-printfn "%A" (typeCheck ex3)
+printfn "%A" (typeCheck success)
+printfn "%A" (typeCheck fail)
+
