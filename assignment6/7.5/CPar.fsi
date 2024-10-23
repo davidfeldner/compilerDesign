@@ -37,6 +37,8 @@ type token =
   | VOID
   | WHILE
   | FOR
+  | PREINCREMENT
+  | PREDECREMENT
   | CSTSTRING of (string)
   | NAME of (string)
   | CSTINT of (int)
@@ -78,6 +80,8 @@ type tokenId =
     | TOKEN_VOID
     | TOKEN_WHILE
     | TOKEN_FOR
+    | TOKEN_PREINCREMENT
+    | TOKEN_PREDECREMENT
     | TOKEN_CSTSTRING
     | TOKEN_NAME
     | TOKEN_CSTINT

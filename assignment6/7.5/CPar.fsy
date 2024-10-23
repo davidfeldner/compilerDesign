@@ -14,7 +14,7 @@ let nl = CstI 10
 %token <int> CSTINT CSTBOOL
 %token <string> CSTSTRING NAME
 
-%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR PREINCREMENT PREDECREMENT
 %token PLUS MINUS TIMES DIV MOD
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
@@ -28,6 +28,8 @@ let nl = CstI 10
 %left EQ NE 
 %left GT LT GE LE
 %left PLUS MINUS
+%right PREINCREMENT
+%right PREDECREMENT
 %left TIMES DIV MOD 
 %nonassoc NOT AMP 
 %nonassoc LBRACK          /* highest precedence  */
@@ -140,6 +142,8 @@ AtExprNotAccess:
     Const                               { CstI $1             }
   | LPAR ExprNotAccess RPAR             { $2                  } 
   | AMP Access                          { Addr $2             }
+  | PREINCREMENT Access { PreInc($2) }
+  | PREDECREMENT Access { PreDec($2) }
 ;
 
 Access:
