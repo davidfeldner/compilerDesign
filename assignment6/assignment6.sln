@@ -7,6 +7,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "microcc", "7.2\microcc.fspr
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "microcc", "7.1\microcc.fsproj", "{8771E745-583E-46BF-9094-6D74BB9051FB}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "microcc", "7.4\microcc.fsproj", "{DD1C0979-9598-4343-A14F-157F5CAACCC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{8771E745-583E-46BF-9094-6D74BB9051FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8771E745-583E-46BF-9094-6D74BB9051FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8771E745-583E-46BF-9094-6D74BB9051FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD1C0979-9598-4343-A14F-157F5CAACCC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD1C0979-9598-4343-A14F-157F5CAACCC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD1C0979-9598-4343-A14F-157F5CAACCC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD1C0979-9598-4343-A14F-157F5CAACCC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
