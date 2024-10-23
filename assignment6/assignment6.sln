@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "microcc", "7.2\microcc.fsproj", "{18C822F0-C6AF-4425-9A76-1E77DE18AADD}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "microcc", "7.1\microcc.fsproj", "{8771E745-583E-46BF-9094-6D74BB9051FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18C822F0-C6AF-4425-9A76-1E77DE18AADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18C822F0-C6AF-4425-9A76-1E77DE18AADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18C822F0-C6AF-4425-9A76-1E77DE18AADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18C822F0-C6AF-4425-9A76-1E77DE18AADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8771E745-583E-46BF-9094-6D74BB9051FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8771E745-583E-46BF-9094-6D74BB9051FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8771E745-583E-46BF-9094-6D74BB9051FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8771E745-583E-46BF-9094-6D74BB9051FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
