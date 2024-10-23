@@ -2,15 +2,16 @@
 
 void arrsum(int n, int arr[], int *sump) {
   *sump = 0;
-  while (n > 0) {
-    n = n - 1;
-    *sump = *sump + arr[n];
+  int i;
+
+  for (i = 0; i < n; i = i + 1) {
+    *sump = *sump + arr[i];
   }
 }
 
 void main() {
   int n;
-  n=4;
+  n = 4;
   int arr[4];
   arr[0] = 7;
   arr[1] = 13;
@@ -21,5 +22,3 @@ void main() {
   print res;
   println;
 }
-
-
