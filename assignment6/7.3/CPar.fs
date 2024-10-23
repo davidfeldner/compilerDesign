@@ -746,7 +746,7 @@ let _fsyacc_reductions = lazy [|
                 (
                    (
 # 103 "CPar.fsy"
-                                                                       Block[Expr(_3);While(_5,Block[Expr(_9);Expr(_7)])]
+                                                                       Block[Stmt(Expr(_3));Stmt(While(_5,Block[Stmt(_9);Stmt(Expr(_7))]))]
                    )
 # 103 "CPar.fsy"
                  : 'gentype_StmtM));
