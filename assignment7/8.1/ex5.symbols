@@ -1,0 +1,55 @@
+24:         LDARGS      //int n
+19 1 5:     CALL 1 5    //main(n)
+25:         STOP
+15 1:       INCSP 1     //int r;
+13:         GETBP
+0 1:        CST 1
+1:          ADD
+13:         GETBP
+0 0:        CST 0
+1:          ADD
+11:         LDI
+12:         STI         //r = n;
+15 -1:      INCSP -1
+15 1:       INCSP 1
+13:         GETBP
+0 0:        CST 0
+1:          ADD
+11:         LDI
+13:         GETBP
+0 2:        CST 2
+1:          ADD
+19 2 57     CALL 2 57   //square(n,&r);
+15 -1:      INCSP -1
+13:         GETBP
+0 2:        CST 2
+1:          ADD
+11:         LDI
+22:         PRINTI      // print r;
+15 -1:      INCSP -1
+15 -1:      INCSP -1
+13:         GETBP
+0 1:        CST 1
+1:          ADD
+11:         LDI
+22:         PRINTI      // print r;
+15 -1:      INCSP -1
+15 -1:      INCSP -1
+21 0:       RET 0
+13:         GETBP       //void square(int i, int *rp)
+0 1:        CST 1
+1:          ADD
+11:         LDI
+13:         GETBP
+0 0:        CST 0
+1:          ADD
+11          LDI
+13:         GETBP
+0 0:        CST 0
+1:          ADD
+11:         LDI
+3:          MUL         // i * i
+12:         STI         //*rp = i * i
+15 -1:      INCSP -1
+15 0:       INCSP 0
+21 1:       RET 1
