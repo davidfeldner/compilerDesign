@@ -1,0 +1,7 @@
+0 20000000    CST 20000000
+16 7          GOTO 7
+0 1           CST 1
+2             SUB 
+9             DUP
+18 4          IFNZRO 4
+25            STOP
