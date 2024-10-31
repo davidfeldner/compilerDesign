@@ -5,10 +5,11 @@ void main() {
   i = 5;
   switch (i) {
   case 4: {
-    print 4;
+    i = 2;
   }
   case 5: {
-    print 5;
+    i = 1;
   }
   }
+  print i;
 }
