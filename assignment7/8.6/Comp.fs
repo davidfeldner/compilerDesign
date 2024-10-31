@@ -147,6 +147,7 @@ let rec cStmt stmt (varEnv: varEnv) (funEnv: funEnv) : instr list =
                 | _ -> failwith "Unexpected case format")
 
         cExpr e varEnv funEnv
+        @ [INCSP -1]
         @ (labelMap
            |> Map.toList
            |> List.collect (fun (value, label) -> [ DUP; CSTI value; EQ; IFNZRO label ]))
