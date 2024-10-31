@@ -127,16 +127,32 @@ let rec cStmt stmt (varEnv: varEnv) (funEnv: funEnv) : instr list =
         @ cStmt stmt2 varEnv funEnv
         @ [ Label labend ]
     | Switch(e, caselist) ->
-        let labelMap = Map.ofList (List.map (fun Case(CstI(e),s) -> (e, newLabel ())) caselist)
+        let labend = newLabel ()
 
-        List.fold
-            (fun acc (c: casestmt) ->
-                let label = newLabel ()
-                [ Label label ] @ cStmt (snd c) varEnv funEnv)
-            []
+        let labelMap =
+            Map.ofList (
+                List.map
+                    (fun case ->
+                        match case with
+                        | Case(CstI(e), _) -> (e, newLabel ())
+                        | _ -> failwith "Unexpected case format")
+                    caselist
+            )
+
+        let caseStatements =
             caselist
+            |> List.collect (fun case ->
+                match case with
+                | Case(CstI(i), stmt) -> [ Label(labelMap.[i]) ] @ cStmt stmt varEnv funEnv @ [ GOTO labend ]
+                | _ -> failwith "Unexpected case format")
 
         cExpr e varEnv funEnv
+        @ (labelMap
+           |> Map.toList
+           |> List.collect (fun (value, label) -> [ DUP; CSTI value; EQ; IFNZRO label ]))
+        @ caseStatements
+        @ [ Label labend ]
+
     | While(e, body) ->
         let labbegin = newLabel ()
         let labtest = newLabel ()
