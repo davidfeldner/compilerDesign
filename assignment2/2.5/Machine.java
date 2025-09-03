@@ -38,23 +38,21 @@ class Machine {
 	System.out.println("Result: "+ seval(p)+"\n");	
     }
 
-    public static int[] readfile(String filename) 
-	throws FileNotFoundException, IOException {
-	ArrayList<Integer> rawprogram = new ArrayList<Integer>();
-	Reader inp = new FileReader(filename);
-	StreamTokenizer tstream = new StreamTokenizer(inp);
-	tstream.parseNumbers();
-	tstream.nextToken();
-	while (tstream.ttype == StreamTokenizer.TT_NUMBER) {
-	    rawprogram.add(Integer.valueOf((int)tstream.nval)) ;; 
-	    tstream.nextToken();
-	}
-	inp.close();
-	final int programsize = rawprogram.size();
-	int[] program = new int[programsize];
-	for (int i=0; i<programsize; i++)
-	    program[i] = ((Integer)(rawprogram.get(i))).intValue();
-	return program;
+    public static int[] readfile(String filename) throws IOException {
+        ArrayList<Integer> rawprogram = new ArrayList<>();
+        try (Reader inp = new FileReader(filename)) {
+            StreamTokenizer tstream = new StreamTokenizer(inp);
+            tstream.parseNumbers();
+
+            while (tstream.nextToken() == StreamTokenizer.TT_NUMBER) {
+                rawprogram.add((int) tstream.nval);  // cast double to int
+            }
+        }
+        int[] program = new int[rawprogram.size()];
+        for (int i = 0; i < rawprogram.size(); i++) {
+            program[i] = rawprogram.get(i);
+        }
+        return program;
     }
     
   public static void test() {
