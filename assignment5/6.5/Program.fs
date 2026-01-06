@@ -78,3 +78,14 @@ let f x = f x in f end
 printfn "%A" (inferType(fromString "
 let f x = f x in f 1 end
 "))
+
+
+
+//(int -> (int -> int))
+printfn "%A" (inferType(fromString "let f x =
+        let g y = if true then y + 1 else x + 1
+        in g end
+    in f end"))
+
+//"('h -> ('g -> 'h))"
+printfn "%A" (inferType(fromString "let f x = x in f end"))
