@@ -1,0 +1,424 @@
+Eksamen, Programmer som Data - 18. December 2024
+Af David Alexander Feldner
+
+Jeg bruger # til at skrive opgave nr, ## til underopgaver og @ til vise hvilken fil der ændres i.
+Kode til fsi er angivet med "Kode:" og resultatet af at køre det er angivet "Resultat:".
+
+# 1
+
+## 1.1
+Icon sproget benytter sig af en normal continuation og en error-continuation når den evaluere kode.
+Den vil først forsøge at finde én løsning med den normale continuation, i dette tilfælde ved at tage det første tal fra generatoren FromTo(1,10), som er 1,
+og returnere dette.
+Hvis vi havde en condition om at det ikke skulle være 1, kunne den back tracke ved at kalde error-continuation og få et andet tal fx giver følgende 2:
+Write(Prim("<", CstI 1, FromTo(1,10)))
+
+## 1.2
+Every(Write(Prim("+", FromTo(1,10), CstI 4)))
+
+Kode:
+run (Every(Write(Prim("+", FromTo(1,10), CstI 4))));;
+
+Resultat:
+5 6 7 8 9 10 11 12 13 14 val it: value = Int 0
+
+
+## 1.3
+Every(Write(Or(FromTo(1,5), FromTo(6,10))))
+
+Kode:
+run (Every(Write(Or(FromTo(1,5), FromTo(6,10)))));;
+
+Resultat:
+1 2 3 4 5 6 7 8 9 10 val it: value = Int 0
+
+
+## 1.4
+@ Icon.fs
+
+type expr = 
+  | CstI of int
+    ...
+  | FromList of int list
+
+let rec eval (e : expr) (cont : cont) (econt : econt) = 
+    match e with
+    | CstI i -> cont (Int i) econt
+    ...
+    | FromList(xs) -> 
+      let rec loop l = 
+        match l with
+        | x :: xs -> 
+            cont (Int x) (fun () -> loop (xs))
+        | [] -> 
+              econt ()
+      loop xs
+
+Kode:
+run (Every(Write(FromList([1..5]))));;
+
+Resultat:
+1 2 3 4 5 val it: value = Int 0
+
+
+## 1.5
+Every(Write(Or(FromList([1..5]), FromList([6..10]))))
+
+Kode:
+run(Every(Write(Or(FromList([1..5]), FromList([6..10])))));;
+
+Resultat:
+1 2 3 4 5 6 7 8 9 10 val it: value = Int 0
+
+
+## 1.6
+
+@ Icon.fs
+
+type expr = 
+  | CstI of int
+    ...
+  | FromMergeList of int list * int list
+
+let rec eval (e : expr) (cont : cont) (econt : econt) = 
+    match e with
+    | CstI i -> cont (Int i) econt
+    ...
+    | FromMergeList(xs, ys) -> 
+      let rec loop l1 l2 = 
+        match l1, l2 with
+        | x :: xs, l2 -> 
+            cont (Int x) (fun () -> loop l2 xs)
+        | [], y::ys -> 
+            cont (Int y) (fun () -> loop [] ys)
+        | [], [] -> 
+              econt ()
+      loop xs ys
+    ...
+
+Kode:
+run(Every(Write(FromMergeList([1..5],[6..12]))));;
+
+Resultat:
+1 6 2 7 3 8 4 9 5 10 11 12 val it: value = Int 0
+
+
+# 2
+## 2.1 & 2.2
+
+@ Absyn.fs  
+
+type expr = 
+  | CstI of int
+    ...
+  | Tup of expr list (* Exam *)
+
+
+@ FunPar.fsy
+
+...
+%token COMMA NTH
+...
+
+Expr:
+    AtExpr                              { $1                     }
+  | AppExpr                             { $1                     }
+    ...
+  | LPAR Exprs RPAR                     { Tup($2)                }
+  | NTH LPAR Expr COMMA Expr RPAR       { Prim("nth", $3, $5)    }
+;
+
+Exprs:
+  | Expr COMMA Exprs1                   { $1 :: $3    }
+;
+
+Exprs1:
+    Expr                                { [$1]     }
+  | Expr COMMA Exprs1                   { $1 :: $3 }
+;
+
+@ FunLex.fsl
+
+let keyword s =
+    match s with
+    | "else"  -> ELSE 
+    ...
+    | "nth"   -> NTH
+ 
+rule Token = parse
+  | [' ' '\t' '\r'] { Token lexbuf }
+    ...
+  | ','             { COMMA }
+
+Kode:
+fromString "let tup = (4,5,6) in nth(0,tup) + nth(1,tup) + nth(2,tup) end";;
+
+Resultat:
+val it: Absyn.expr =
+Let ("tup", Tup [CstI 4; CstI 5; CstI 6],
+Prim ("+", Prim ("+", Prim ("nth", CstI 0, Var "tup"), 
+Prim ("nth", CstI 1, Var "tup")), Prim ("nth", CstI 2, Var "tup")))
+
+
+## 2.3
+
+@ HigherFun.fs
+
+type value = 
+  | Int of int
+    ...
+  | TupVal of value list (* Exam *)
+
+
+let rec eval (e : expr) (env : value env) : value =
+    match e with
+    | CstI i -> Int i
+    ...
+    | Prim(ope, e1, e2) -> 
+      let v1 = eval e1 env
+      let v2 = eval e2 env
+      match (ope, v1, v2) with
+        ...
+      | ("nth", Int i, TupVal l) -> l[i]
+      |  _ -> failwith "unknown primitive or wrong type"
+    ...
+    | Tup (l) ->
+      List.map (fun e -> eval e env) l |> TupVal
+
+
+Kode:
+run (fromString "let tup = (4,5,6) in nth(0,tup) + nth(1,tup) + nth(2,tup) end");;
+
+Resultat:
+val it: HigherFun.value = Int 15
+
+
+
+# 3
+## 3.1
+
+Der sker 3 normale kald for at kører main: main, fac og facT. Linje 9, 10 og 11.
+fac og facT er ikke tailcalls i main da deres resultat skal printes (og de er ikke til sidst i funktionen).
+Derefter kaldes fac og facT begge 12 gange da de får 12 som argument og kalder sig selv rekursivt ned til at n er lig 0. 
+Linje 21 og 28 har 12 kald hver som er hhv calls og tCalls.
+Vi får heraf følgende:
+
+Normale kald: 3 + 12 = 15
+Hale kald : 12
+
+Dette kan også ses i maskinkoden (henvisning til printstat.c efter '#' i med formatet "# linjeNR: kode"):
+val it: Machine.instr list =
+  [LDARGS;                                           CALL (0, "L1");     # 9:  void main() {
+  STOP; Label "L1"; CSTI 12;                         CALL (1, "L2");     # 10:   print (fac(12));
+  PRINTI;INCSP -1; CSTI 12; CSTI 1;                  CALL (2, "L3");     # 11:   print (facT(12,1)); 
+  PRINTI; INCSP -1; NUMCALLS;PRINTI; INCSP -1; 
+  NUMTCALLS; PRINTI; RET 0; Label "L2"; GETBP; 
+  LDI; IFNZRO "L4"; CSTI 1; RET 1; Label "L4"; 
+  GETBP; LDI; GETBP; LDI; CSTI 1; SUB;               CALL (1, "L2");     # 21:   return n * fac(n-1);
+  MUL; RET 1; Label "L3"; GETBP; LDI; IFNZRO "L5"; 
+  GETBP;CSTI 1; ADD; LDI; RET 2; 
+  Label "L5"; GETBP; LDI; CSTI 1; SUB; 
+  GETBP; LDI;GETBP; CSTI 1; ADD; LDI; MUL;           TCALL (2, 2, "L3")] # 28:   return facT(n-1, n*acc);
+
+
+## 3.2
+
+@ Absyn.fs
+
+and expr =                                                         
+  | Access of access                 (* x    or  *p    or  a[e]     *)
+    ...
+  | Prim0 of string (* Exam - Nullary primitive operator *)
+
+@ CPar.fsy
+
+%token NUMCALLS NUMTCALLS
+
+ExprNotAccess:
+    AtExprNotAccess                     { $1                  }
+    ...
+  | NUMCALLS                            { Prim0("numCalls") }
+  | NUMTCALLS                           { Prim0("numTCalls") }
+
+
+@ CLex.fsl
+
+let keyword s =
+    match s with
+    | "char"    -> CHAR 
+    ...
+    | "numCalls" -> NUMCALLS 
+    | "numTailCalls" ->  NUMTCALLS    
+
+Kode:
+fromFile "printstat.c";;
+
+Resultat:
+val it: Absyn.program =
+  Prog
+    [Fundec
+       (None, "main", [],
+        Block
+          [Stmt (Expr (Prim1 ("printi", Call ("fac", [CstI 12]))));
+           Stmt (Expr (Prim1 ("printi", Call ("facT", [CstI 12; CstI 1]))));
+           Stmt (Expr (Prim1 ("printi", Prim0 "numCalls")));
+           Stmt (Expr (Prim1 ("printi", Prim0 "numTCalls")))]);
+     Fundec ...
+     Fundec ...
+
+
+## 3.3
+
+@ Machine.java
+
+final static int 
+    CSTI = 0, ADD = 1, SUB = 2, MUL = 3, DIV = 4, MOD = 5, 
+    ...
+    NUMCALLS = 26,
+    NUMTCALLS = 27;
+
+static int execcode(int[] p, int[] s, int[] iargs, boolean trace) {
+    ...
+    int calls = 0;
+    int tCalls = 0;
+    for (;;) {
+      if (trace) 
+        printsppc(s, bp, sp, p, pc);
+      switch (p[pc++]) {
+      case CALL: { 
+        calls += 1;
+        ...
+      } break; 
+      case TCALL: { 
+        tCalls += 1;
+        ...
+      } break; 
+      ...
+      case NUMCALLS: { 
+        s[++sp] = calls; 
+      } break; 
+      case NUMTCALLS: { 
+        s[++sp] = tCalls; 
+      } break; 
+      ...
+      }
+   }
+}
+
+
+static String insname(int[] p, int pc) {
+    switch (p[pc]) {
+    case CSTI:   return "CSTI " + p[pc+1]; 
+    ...
+    case NUMCALLS:   return "NUMCALLS";
+    case NUMTCALLS:  return "NUMTCALLS";
+    ...
+    }
+  }
+
+
+
+## 3.4
+Jeg har også rettet Machine.fs til at have de matchende bytecode instruktioner, 
+selvom det ikke stod beskrevt i opgaven, da dette er nødvendigt for at kunne compile de nye instruktioner.
+
+@ Machine.fs
+
+type instr =
+  | Label of label                     (* symbolic label; pseudo-instruc. *)
+  ...
+  | NUMCALLS
+  | NUMTCALLS
+
+...
+let CODESTOP   = 25;
+let CODENUMCALLS   = 26;
+let CODENUMTCALLS   = 27;
+
+
+let makelabenv (addr, labenv) instr = 
+    match instr with
+    | Label lab      -> (addr, (lab, addr) :: labenv)
+    ...  
+    | NUMCALLS       -> (addr+1, labenv)
+    | NUMTCALLS      -> (addr+1, labenv)
+
+
+let rec emitints getlab instr ints = 
+    match instr with
+    | Label lab      -> ints
+    ...
+    | NUMCALLS           -> CODENUMCALLS   :: ints
+    | NUMTCALLS           -> CODENUMTCALLS   :: ints
+
+@ Contcomp.fs
+
+and cExpr (e : expr) (varEnv : varEnv) (funEnv : funEnv) (C : instr list) : instr list =
+    match e with
+    | Access acc     -> cAccess acc varEnv funEnv (LDI :: C)
+    ...
+    | Prim0(ope) ->
+        (match ope with
+          | "numCalls"  -> NUMCALLS :: C
+          | "numTCalls" -> NUMTCALLS :: C
+          | _        -> failwith "unknown primitive 0")
+    ...
+
+
+Kode:
+java Machine printstat.out
+
+Resultat:
+479001600 479001600 15 12
+Ran 0.009 seconds
+
+
+# 4
+## 4.1
+Jeg har angivet en kommentar til hver linje efter // og hvis relevant en henvisning til printstat.c efter '#' i med formatet "# linjeNR: kode". 
+
+
+    LDARGS;                                     // Load parameter fra kommandolinie
+                                                // (der er ikke nogen).
+    CALL (0, "L1");                             // Kald main.
+    STOP;                                       // Stop ved retur fra main.
+Label "L1";                                     // Label for "main()"                                         # 9:  void main() {
+    CSTI 12; CALL (1, "L2"); PRINTI;            // Kald fac med konstanten 12 og print resultatet             # 10: print (fac(12));
+    INCSP -1;                                   // Fjern resultatet fra stakken
+    CSTI 12; CSTI 1; CALL (2, "L3"); PRINTI;    // Kald facT med konstanten 12 og print resultatet            # 11: print (facT(12,1)); 
+    INCSP -1;                                   // Fjern resultatet fra stakken
+    NUMCALLS; PRINTI;                           // Print antal CALLs.                                         # 13: print numCalls;
+    INCSP -1;                                   // Fjern resultatet fra stakken
+    NUMTCALLS; PRINTI;                          // Print antal TCALLs.                                        # 14: print numTailCalls;
+    RET 0;                                      // Retuner fra main
+Label "L2";                                     // Label for "fac(int n)"                                     # 17: int fac(int n) {
+        GETBP; LDI; IFNZRO "L4";                // Load bp som peger på n og gå til L4 hvis ikke lig 0        # 18: if (n == 0) 
+        CSTI 1; RET 1;                          // Lig 1 på stakken (retur værdi) og retuner fra fac          # 19: return 1;
+    Label "L4";                                 // Label for "else" i fac                                     # 20: else 
+        GETBP; LDI;                             // Load bp som peger på int n  
+        GETBP; LDI; CSTI 1; SUB;                // Load n igen og minus 1 (n-1)
+        CALL (1, "L2");                         // Kald fac med n-1
+        MUL;                                    // Multiplicer rsultatet af fac(n-1) med n
+        RET 1;                                  // Retuner fra fac                                            # 22: return n * fac(n-1);
+Label "L3";                                     // Label for "facT(int n, int acc)"                           # 24: int facT(int n, int acc) {
+        GETBP; LDI; IFNZRO "L5";                // Load bp som peger på int n og gå til L5 hvis ikke lig 0    # 25: if (n == 0) 
+        GETBP; CSTI 1; ADD; LDI; RET 2;         // Load bp+1 som peger på acc og retuner fra facT             # 26: return acc;
+    Label "L5";                                 // Label for "else" i facT                                    # 27: else
+        GETBP; LDI; CSTI 1; SUB;                // Load bp som peger på n og minus 1 (n-1)
+        GETBP; LDI;                             // Load n
+        GETBP; CSTI 1; ADD; LDI;                // Load acc 
+        MUL;                                    // Multiplicer n*acc
+        TCALL (2, 2, "L3")                      // Kald facT med de 2 argumenter n-1, n*acc                   # 28: return facT(n-1, n*acc);
+                                                // (Vi har ikke ret da det er et tail call og stackframen  
+                                                //  fortsætter, til ret på linje 26 bliver kaldt)
+
+
+## 4.2
+
+24              // LDARGS
+19 0 5          // CALL(0,5)
+25              // STOP
+0 12            // CSTI(12)
+19 1 31         // CALL(1,31)
+22              // PRINTI
+15 -1           // INCSP(-1)
