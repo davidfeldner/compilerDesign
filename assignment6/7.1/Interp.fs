@@ -216,12 +216,12 @@ and evals es locEnv gloEnv store : int list * store =
 and callfun f es locEnv gloEnv store : int * store =
     let (_, nextloc) = locEnv
     let (varEnv, funEnv) = gloEnv
-    let (paramdecs, fBody) = lookup funEnv f
-    let (vs, store1) = evals es locEnv gloEnv store
+    let (paramdecs, fBody) = lookup funEnv f  // find func
+    let (vs, store1) = evals es locEnv gloEnv store   // eval args
     let (fBodyEnv, store2) = 
-        bindVars (List.map snd paramdecs) vs (varEnv, nextloc) store1
-    let store3 = exec fBody fBodyEnv gloEnv store2 
-    (-111, store3)
+        bindVars (List.map snd paramdecs) vs (varEnv, nextloc) store1 // bind args 
+    let store3 = exec fBody fBodyEnv gloEnv store2  // call fund
+    (-111, store3) // Dummy return since all fun are void
 
 (* Interpret a complete micro-C program by initializing the store 
    and global environments, then invoking its `main' function.

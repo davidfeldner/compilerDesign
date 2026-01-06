@@ -1,8 +1,11 @@
 void main() {
-  int n[1];
-  n[0] = 3;
-  print(n);
-  ++n[0];
-  print(n[0]);
-  println;
+  int x[10];
+  int y;
+  y = 0;
+  x[y]     = 5;
+  x[y + 1] = 42;
+  ++x[++y]; // <-- careful!
+  ++x[y];
+  print x[y];
+  print y;
 }
