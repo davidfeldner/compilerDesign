@@ -17,3 +17,6 @@ public synchronized int get() {
   first.next = null;  // edit
   return head.item;
 }
+
+
+This is specifically a problem because we have a global reference to dummy, so all nodes are reachable from there, unless we use the fix
