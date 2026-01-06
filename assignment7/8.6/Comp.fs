@@ -128,7 +128,7 @@ let rec cStmt stmt (varEnv: varEnv) (funEnv: funEnv) : instr list =
         @ [ Label labend ]
     | Switch(e, caselist) ->
         let labend = newLabel ()
-
+        // Make map from case int to new label 
         let labelMap =
             Map.ofList (
                 List.map
@@ -138,16 +138,18 @@ let rec cStmt stmt (varEnv: varEnv) (funEnv: funEnv) : instr list =
                         | _ -> failwith "Unexpected case format")
                     caselist
             )
-
+        // Compile each case :   label :: compiled-statement :; GOTO end 
         let caseStatements =
             caselist
             |> List.collect (fun case ->
                 match case with
-                | Case(CstI(i), stmt) -> [ Label(labelMap.[i]) ] @ cStmt stmt varEnv funEnv @ [ GOTO labend ]
+                // Here we INCSP -1 to remove the evaluated value of e, which we no longer need
+                // Since we have already jumped to this case, and this is a statement
+                | Case(CstI(i), stmt) ->  Label(labelMap.[i]):: INCSP -1 :: cStmt stmt varEnv funEnv @ [ GOTO labend ]
                 | _ -> failwith "Unexpected case format")
-
+        
+        // 
         cExpr e varEnv funEnv
-        @ [INCSP -1]
         @ (labelMap
            |> Map.toList
            |> List.collect (fun (value, label) -> [ DUP; CSTI value; EQ; IFNZRO label ]))
