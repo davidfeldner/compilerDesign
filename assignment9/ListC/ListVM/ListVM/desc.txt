@@ -1,0 +1,41 @@
+ADD
+
+Pop the top two values from the stack, v2 then v1 because v2.
+Both must be integers (tagged integer representation used by the machine); the tags are removed and the machine adds the integer payloads.
+The result is re-tagged as an integer and pushed onto the stack.
+If either operand is not an integer, the machine signals a runtime type error.
+
+CSTI i
+
+Push the constant integer i (properly machine-tagged) onto the stack.
+No heap access occurs; this is just a stack push of an immediate.
+
+NIL
+
+Push the special nil reference onto the stack (often represented as a reserved pointer value or a distinguished tag).
+NIL represents the empty list / null pointer; it is a heap reference (not an integer).
+Difference vs CSTI 0: CSTI 0 pushes an integer whose numeric value is zero (an immediate integer), whereas NIL pushes a reference/value that denotes the empty pointer. They have different tags and are treated differently by type tests and by the GC (an integer is not followed as a heap pointer; NIL is a special reference which the marking code treats as a pointer value that denotes "no object").
+
+IFZERO
+
+Pop the top value and test: if the thing is an integer, test whether it equals 0; if a reference, test whether it is nil.
+If the test is true, jump to the true branch (or push a boolean / follow the branch per the machine encoding); otherwise take the false branch.
+(Implementation detail) The instruction must first discriminate whether the value is an immediate integer or a heap reference and do the appropriate test.
+
+CONS
+
+Allocate a new 2-word heap block (a cons cell) containing head and tail fields.
+Pop the top two values from the stack (usually tail then head), store them into the newly allocated block’s data words, and push a pointer/reference to that block onto the stack.
+If allocation fails because there is no usable free block, the mutator must call the garbage collector to free unreachable blocks and retry allocation.
+
+CAR
+
+Pop (or read) a heap reference to a cons cell and push the first field (the car / head) onto the stack.
+The instruction checks that the argument is a non-nil pair/cons; otherwise it signals an error.
+No allocation; just a read from the cons cell’s first data word.
+
+SETCAR
+
+Pop a value and a heap reference (cons cell pointer) and write the value into the cons cell’s first field (car) in place.
+This mutates a reachable heap block; because the mutator writes pointers into heap blocks, a precise GC must ensure such updates are visible/handled correctly (e.g., write-barrier in generational collectors).
+For a simple mark–sweep, a write barrier is typically not required for correctness in a stop-the-world collector, but the mutation simply updates memory.
