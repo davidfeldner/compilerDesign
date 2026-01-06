@@ -24,6 +24,8 @@ type token =
   | NOT
   | THEN
   | TRUE
+  | OR
+  | AND
   | CSTBOOL of (bool)
   | NAME of (string)
   | CSTINT of (int)
@@ -51,6 +53,8 @@ type tokenId =
     | TOKEN_NOT
     | TOKEN_THEN
     | TOKEN_TRUE
+    | TOKEN_OR
+    | TOKEN_AND
     | TOKEN_CSTBOOL
     | TOKEN_NAME
     | TOKEN_CSTINT
@@ -59,10 +63,10 @@ type tokenId =
 type nonTerminalId = 
     | NONTERM__startMain
     | NONTERM_Main
+    | NONTERM_Names1
     | NONTERM_Expr
     | NONTERM_AtExpr
-    | NONTERM_Params
-    | NONTERM_Args
+    | NONTERM_Arguments
     | NONTERM_AppExpr
     | NONTERM_Const
 /// This function maps tokens to integer indexes

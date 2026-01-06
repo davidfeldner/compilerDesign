@@ -18,8 +18,9 @@
 %token EOF
 
 %left ELSE              /* lowest precedence  */
+%left AND OR
 %left EQ NE 
-%nonassoc GT LT GE LE
+%left GT LT GE LE
 %left PLUS MINUS
 %left TIMES DIV MOD 
 %nonassoc NOT           /* highest precedence  */
@@ -74,7 +75,6 @@ Args:
 
 AppExpr:
     AtExpr Args                         { Call($1, $2) }
-  | AtExpr                              { $1           }
 ;
 
 Const:

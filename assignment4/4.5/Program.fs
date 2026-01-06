@@ -31,6 +31,14 @@ let pow8 b = b*b*b*b*b*b*b*b in
 end
 "
 
-let e = fromString @"  let x a b = a && b in x true true end"
+let e = fromString @"   let x a b = a && b in x true true end"
+let e2 = fromString @"  let x a b = a && b in x false true end"
+let e3 = fromString @"  let x a b = a && b in x false false end"
+let e4 = fromString @"  let x a b = a || b in x false true end"
+let e5 = fromString @"  let x a b = a || b in x false false end"
 
 printfn "%A" (run e)
+printfn "%A" (run e2)
+printfn "%A" (run e3)
+printfn "%A" (run e4)
+printfn "%A" (run e5)
